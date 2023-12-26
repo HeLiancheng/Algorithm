@@ -2,7 +2,7 @@
  * \file   AVLTree.h
  * \brief  
  * This is a sample of AVL Tree.
- * \author Administrator
+ * \author Liancheng He
  * \date   December 2023
  *********************************************************************/
 #pragma once
