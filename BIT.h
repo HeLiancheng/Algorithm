@@ -9,10 +9,9 @@
 #pragma once
 #include<cstring>
 #define MAX_LEN 10000
+
 class BIT {
 public:
-	int tree[MAX_LEN];
-	int N;
 	BIT(int inpt[], int n) {
 		N = n;
 		memset(tree, 0, sizeof(tree));
@@ -29,9 +28,13 @@ public:
 		return preSum(findR) - preSum(findL - 1);
 	}
 private:
+	int tree[MAX_LEN];
+	int N;
+
 	inline int lowBit(int x) {
 		return (x) & (-x);
 	}
+
 	inline int preSum(int idx) {
 		int cnt = 0;
 		for (int i = idx; i; i -= lowBit(i)) {

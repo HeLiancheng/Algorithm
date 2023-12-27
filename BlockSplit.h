@@ -15,9 +15,6 @@ using namespace std;
 
 class BlockSplit {
 public:
-	int* arr, * idxSet;
-	int idx;
-	int block[40][40];
 	BlockSplit(int inpt[][2], int n) {
 		idx = 0;
 		arr = new int[MAX_LEN];
@@ -37,9 +34,6 @@ public:
 		idxSet[idx] = tmp;
 		++idx;
 	}
-	inline int calDistance(int ax, int ay, int bx, int by) {
-		return abs(ax - bx) + abs(ay - by);
-	}
 
 	int findNeighbor(int x, int y, int dis) {//dis <= 100
 		int cnt = 0;
@@ -56,8 +50,17 @@ public:
 		}
 		return cnt;
 	}
+	
+private:
+	int* arr, * idxSet;
+	int idx;
+	int block[40][40];
 
 	void init(int inpt[][2], int n) {
 		while (idx < n) addDot(inpt[idx][0], inpt[idx][1]);
+	}
+
+	inline int calDistance(int ax, int ay, int bx, int by) {
+		return abs(ax - bx) + abs(ay - by);
 	}
 };

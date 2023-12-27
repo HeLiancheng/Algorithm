@@ -10,6 +10,7 @@
 #include<vector>
 #define PII pair<int, int>
 using namespace std;
+
 struct edge {
 	int node;
 	int length;

@@ -10,6 +10,7 @@
 #include<cstdio>
 constexpr int RED = 1;
 constexpr int BLACK = 2;
+
 struct RBNode {
 	int color;
 	RBNode* left, * right, * parent;
@@ -36,6 +37,92 @@ public:
 		printf("%d ", root->value);
 		MidOrderIter(root->right);
 	}
+
+	void insert(int val) {
+		RBNode* node = new RBNode(val);
+		node->left = node->right = tLeaf;
+		RBNode* parent = nullptr, * tmp = this->tRoot;
+		while (tmp != tLeaf) {
+			parent = tmp;
+			tmp = cmp(node, tmp) ? tmp->left : tmp->right;
+		}
+		node->parent = parent;
+		if (parent == nullptr) {
+			node->color = BLACK;
+			this->tRoot = node;
+			return;
+		}
+		if (cmp(node, parent))
+			parent->left = node;
+		else parent->right = node;
+
+		if (parent->parent == nullptr)
+			return;
+		balanceAfterInsert(node);
+	}
+
+	void erase(int val) {
+		RBNode* node = findNode(val);
+		if (node == tLeaf) {
+			printf("can not find the value %d", val);
+			return;
+		}
+		int oriColor = node->color;
+		RBNode* tmp = node;
+		if (node->left == tLeaf) {
+			tmp = node->right;
+			transplant(node, node->right);
+		}
+		else if (node->right == tLeaf) {
+			tmp = node->left;
+			transplant(node, node->left);
+		}
+		else {
+			RBNode* rl = minimum(node->right);
+			oriColor = rl->color;
+			if (rl->parent == node) {
+				node->right = rl->right;
+				rl->right->parent = node;
+			}
+			else {
+				transplant(rl, rl->right);
+			}
+			node->value = rl->value;
+			delete rl;
+			rl = nullptr;
+
+		}
+		if (oriColor == BLACK)
+			balanceAfterDelete(tmp);
+	}
+
+private:
+	RBNode* findNode(int val) {
+		RBNode* node = this->tRoot;
+		while (node != tLeaf) {
+			if (val == node->value)return node;
+			if (val < node->value)node = node->left;
+			else if (val > node->value)node = node->right;
+		}
+		return node;
+	}
+
+	inline void transplant(RBNode* a, RBNode* b) {
+		if (a->parent == nullptr)
+			this->tRoot = b;
+		else if (a == a->parent->left)
+			a->parent->left = b;
+		else a->parent->right = b;
+		b->parent = a->parent;
+	}
+
+	RBNode* minimum(RBNode* node) {
+		while (node->left != tLeaf) {
+			node = node->left;
+		}
+		return node;
+	}
+
 	inline RBNode* search(int val, RBNode* node) {
 		if (node == tLeaf || node->value == val)
 			return node;
@@ -46,6 +133,7 @@ public:
 			return search(val, node->right);
 		}
 	}
+
 	inline void leftRotate(RBNode* node) {
 		RBNode* r = node->right;
 		node->right = r->left;
@@ -64,6 +152,7 @@ public:
 		r->parent = node->parent;
 		node->parent = r;
 	}
+
 	inline void rightRotate(RBNode* node) {
 		RBNode* l = node->left;
 		node->left = l->right;
@@ -82,6 +171,7 @@ public:
 		l->parent = node->parent;
 		node->parent = l;
 	}
+
 	void balanceAfterInsert(RBNode* node) {
 		RBNode* uncle;
 		while (node->parent->color == RED) {
@@ -184,89 +274,5 @@ public:
 				}
 			}
 		}
-	}
-
-	void insert(int val) {
-		RBNode* node = new RBNode(val);
-		node->left = node->right = tLeaf;
-		RBNode* parent = nullptr, * tmp = this->tRoot;
-		while (tmp != tLeaf) {
-			parent = tmp;
-			tmp = cmp(node, tmp) ? tmp->left : tmp->right;
-		}
-		node->parent = parent;
-		if (parent == nullptr) {
-			node->color = BLACK;
-			this->tRoot = node;
-			return;
-		}
-		if (cmp(node, parent))
-			parent->left = node;
-		else parent->right = node;
-
-		if (parent->parent == nullptr)
-			return;
-		balanceAfterInsert(node);
-	}
-
-	RBNode* findNode(int val) {
-		RBNode* node = this->tRoot;
-		while (node != tLeaf) {
-			if (val == node->value)return node;
-			if (val < node->value)node = node->left;
-			else if (val > node->value)node = node->right;
-		}
-		return node;
-	}
-
-	inline void transplant(RBNode* a, RBNode* b) {
-		if (a->parent == nullptr)
-			this->tRoot = b;
-		else if (a == a->parent->left)
-			a->parent->left = b;
-		else a->parent->right = b;
-		b->parent = a->parent;
-	}
-
-	RBNode* minimum(RBNode* node) {
-		while (node->left != tLeaf) {
-			node = node->left;
-		}
-		return node;
-	}
-
-	void erase(int val) {
-		RBNode* node = findNode(val);
-		if (node == tLeaf) {
-			printf("can not find the value %d", val);
-			return;
-		}
-		int oriColor = node->color;
-		RBNode* tmp = node;
-		if (node->left == tLeaf) {
-			tmp = node->right;
-			transplant(node, node->right);
-		}
-		else if (node->right == tLeaf) {
-			tmp = node->left;
-			transplant(node, node->left);
-		}
-		else {
-			RBNode* rl = minimum(node->right);
-			oriColor = rl->color;
-			if (rl->parent == node) {
-				node->right = rl->right;
-				rl->right->parent = node;
-			}
-			else {
-				transplant(rl, rl->right);
-			}
-			node->value = rl->value;
-			delete rl;
-			rl = nullptr;
-
-		}
-		if (oriColor == BLACK)
-			balanceAfterDelete(tmp);
 	}
 };

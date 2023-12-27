@@ -2,6 +2,7 @@
  * \file   AVLTree.h
  * \brief  
  * This is a sample of AVL Tree.
+ * 
  * \author Liancheng He
  * \date   December 2023
  *********************************************************************/
@@ -9,6 +10,7 @@
 #include <cstdio>
 #include <algorithm>
 using namespace std;
+
 struct AVLNode {
 	int value;
 	AVLNode* left;
@@ -17,127 +19,18 @@ struct AVLNode {
 	int balanceFactor;
 	AVLNode(int val) : value(val), left(nullptr), right(nullptr), parent(nullptr), balanceFactor(0) {}
 };
+
 class AVLTree {
 public:
 	AVLNode* tRoot;
 	AVLTree() : tRoot(nullptr) {}
+
 	void MidOrderIter(AVLNode* root) {
 		if (root == nullptr)
 			return;
 		MidOrderIter(root->left);
 		printf("%d ", root->value);
 		MidOrderIter(root->right);
-	}
-	AVLNode* find(int val, AVLNode* nod) {
-		AVLNode* res = nullptr, * node = nod;
-		while (node) {
-			res = node;
-			if (node->value < val) {
-				node = node->right;
-			}
-			else if (node->value > val) {
-				node = node->left;
-			}
-			else
-				break;
-		}
-		return res;
-	}
-
-	AVLNode* findUnbalance(AVLNode* node) {
-		if (node == nullptr || abs(node->balanceFactor) > 1)
-			return node;
-		return findUnbalance(node->parent);
-	}
-	void updateAllBalance(AVLNode* node) {
-		AVLNode* parent = node->parent;
-		while (parent) {
-			if (parent->left == node)
-				parent->balanceFactor--;
-			else
-				parent->balanceFactor++;
-			node = parent;
-			parent = parent->parent;
-		}
-	}
-
-	void RotateLeft(AVLNode* node) {
-		AVLNode* pparent = node->parent;
-		AVLNode* rt = node->right;
-		AVLNode* rl = rt->left;
-		node->right = rl;
-		rt->left = node;
-		if (pparent == nullptr) {
-			tRoot = rt;
-		}
-		else {
-			bool isL = pparent->left == node ? true : false;
-			if (isL) {
-				pparent->left = rt;
-			}
-			else {
-				pparent->right = rt;
-			}
-		}
-		rt->parent = pparent;
-		node->parent = rt;
-		if (rl)
-			rl->parent = node;
-		rt->balanceFactor = 0;
-		node->balanceFactor = 0;
-	}
-
-	void RotateRight(AVLNode* node) {
-		AVLNode* pparent = node->parent;
-		AVLNode* lft = node->left;
-		AVLNode* lr = lft->right;
-		node->left = lr;
-		lft->right = node;
-		if (pparent == nullptr) {
-			tRoot = lft;
-		}
-		else {
-			bool isL = pparent->left == node ? true : false;
-			if (isL) {
-				pparent->left = lft;
-			}
-			else {
-				pparent->right = lft;
-			}
-		}
-		lft->parent = pparent;
-		node->parent = lft;
-		if (lr)
-			lr->parent = node;
-		lft->balanceFactor = 0;
-		node->balanceFactor = 0;
-	}
-	void LeftRightRotate(AVLNode* parent) {
-		AVLNode* lft = parent->left;
-		AVLNode* lr = lft->right;
-		int bf = lr->balanceFactor;
-		RotateLeft(lft);
-		RotateRight(parent);
-		if (bf < 0) {
-			parent->balanceFactor = 1;
-		}
-		else if (bf > 0) {
-			lft->balanceFactor = -1;
-		}
-	}
-
-	void RightLeftRotate(AVLNode* parent) {
-		AVLNode* rt = parent->right;
-		AVLNode* rl = rt->left;
-		int bf = rl->balanceFactor;
-		RotateRight(rt);
-		RotateLeft(parent);
-		if (bf < 0) {
-			parent->balanceFactor = 1;
-		}
-		else if (bf > 0) {
-			rt->balanceFactor = -1;
-		}
 	}
 
 	void insert(int val) {
@@ -269,5 +162,119 @@ public:
 			}
 		}
 
+	}
+private:
+	inline AVLNode* findUnbalance(AVLNode* node) {
+		if (node == nullptr || abs(node->balanceFactor) > 1)
+			return node;
+		return findUnbalance(node->parent);
+	}
+
+	inline void updateAllBalance(AVLNode* node) {
+		AVLNode* parent = node->parent;
+		while (parent) {
+			if (parent->left == node)
+				parent->balanceFactor--;
+			else
+				parent->balanceFactor++;
+			node = parent;
+			parent = parent->parent;
+		}
+	}
+
+	inline AVLNode* find(int val, AVLNode* nod) {
+		AVLNode* res = nullptr, * node = nod;
+		while (node) {
+			res = node;
+			if (node->value < val) {
+				node = node->right;
+			}
+			else if (node->value > val) {
+				node = node->left;
+			}
+			else
+				break;
+		}
+		return res;
+	}
+
+	inline void RotateLeft(AVLNode* node) {
+		AVLNode* pparent = node->parent;
+		AVLNode* rt = node->right;
+		AVLNode* rl = rt->left;
+		node->right = rl;
+		rt->left = node;
+		if (pparent == nullptr) {
+			tRoot = rt;
+		}
+		else {
+			bool isL = pparent->left == node ? true : false;
+			if (isL) {
+				pparent->left = rt;
+			}
+			else {
+				pparent->right = rt;
+			}
+		}
+		rt->parent = pparent;
+		node->parent = rt;
+		if (rl)
+			rl->parent = node;
+		rt->balanceFactor = 0;
+		node->balanceFactor = 0;
+	}
+
+	inline void RotateRight(AVLNode* node) {
+		AVLNode* pparent = node->parent;
+		AVLNode* lft = node->left;
+		AVLNode* lr = lft->right;
+		node->left = lr;
+		lft->right = node;
+		if (pparent == nullptr) {
+			tRoot = lft;
+		}
+		else {
+			bool isL = pparent->left == node ? true : false;
+			if (isL) {
+				pparent->left = lft;
+			}
+			else {
+				pparent->right = lft;
+			}
+		}
+		lft->parent = pparent;
+		node->parent = lft;
+		if (lr)
+			lr->parent = node;
+		lft->balanceFactor = 0;
+		node->balanceFactor = 0;
+	}
+
+	inline void LeftRightRotate(AVLNode* parent) {
+		AVLNode* lft = parent->left;
+		AVLNode* lr = lft->right;
+		int bf = lr->balanceFactor;
+		RotateLeft(lft);
+		RotateRight(parent);
+		if (bf < 0) {
+			parent->balanceFactor = 1;
+		}
+		else if (bf > 0) {
+			lft->balanceFactor = -1;
+		}
+	}
+
+	inline void RightLeftRotate(AVLNode* parent) {
+		AVLNode* rt = parent->right;
+		AVLNode* rl = rt->left;
+		int bf = rl->balanceFactor;
+		RotateRight(rt);
+		RotateLeft(parent);
+		if (bf < 0) {
+			parent->balanceFactor = 1;
+		}
+		else if (bf > 0) {
+			rt->balanceFactor = -1;
+		}
 	}
 };

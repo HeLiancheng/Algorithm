@@ -12,8 +12,7 @@
 #define kr k<<1|1
 
 class SegmentTree {
-	int* arr;
-	int tree[MAX_LEN << 2];
+public:
 	SegmentTree(int inpt[], int n) {
 		arr = inpt;
 		build(1, n, 1);
@@ -57,4 +56,8 @@ class SegmentTree {
 		if (r > mid)temp += query(mid + 1, r, findl, findr, kr);
 		return temp;
 	}
+
+private:
+	int* arr;
+	int tree[MAX_LEN << 2];
 };

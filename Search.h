@@ -11,13 +11,11 @@
 #include<queue>
 #define NODE_NUM 100
 #define PII pair<int, int>
-#define PII pair<int, int>
 
 using namespace std;
+
 class Search {
 public:
-	vector<int> edges[NODE_NUM];
-	vector<int> visit;
 	Search(vector<PII>& v) {
 		visit.assign(NODE_NUM, 0);
 		for (auto it : v) {
@@ -44,7 +42,17 @@ public:
 		}
 		return -1;
 	}
-	int mDfs(int source, int dst, int step) {
+
+	int dfs(int source, int dst) {
+		fill(visit.begin(), visit.end(), 0);
+		visit[source] = 1;
+		return mDfs(source, dst, 0);
+	}
+private:
+	vector<int> edges[NODE_NUM];
+	vector<int> visit;
+
+	inline int mDfs(int source, int dst, int step) {
 		if (source == dst)return step;
 		int ret = INT_MAX;
 		for (int node : edges[source]) {
@@ -55,10 +63,5 @@ public:
 			}
 		}
 		return ret;
-	}
-	int dfs(int source, int dst) {
-		fill(visit.begin(), visit.end(), 0);
-		visit[source] = 1;
-		return mDfs(source, dst, 0);
 	}
 };
