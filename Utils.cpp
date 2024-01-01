@@ -118,3 +118,63 @@ int split_array(vector<int>& nums, int k) {
 	}
 	return l;
 }
+
+bool Prim(int n, vector<vector<int>>& v) {
+	unordered_set<int> notSet;
+	vector<int> minEdge(n); //minIdx(n);
+	for (int i = 1; i < n; ++i) {
+		notSet.emplace(i);
+		minEdge[i] = v[0][i];
+		//minIdx[i] = 0;
+	}
+	int i = 0, mMin = INT_MAX, mIdx = 0;
+	for (int i = 1; i < n; ++i) {
+		mMin = INT_MAX, mIdx = 0;
+		//query
+		for (int i : notSet) {
+			if (mMin > minEdge[i]) {
+				mMin = minEdge[i];
+				mIdx = i;
+			}
+		}
+		if (mMin == INT_MAX) return false;
+		//update
+		notSet.erase(mIdx);
+		for (int i : notSet) {
+			if (v[mIdx][i] < minEdge[i]) {
+				minEdge[i] = v[mIdx][i];
+				//minIdx[i] = mIdx;
+			}
+		}
+	}
+	return true;
+}
+
+static void updateUnion(int u, int v, vector<int> &mUnion) {
+	for (int i = 0; i < mUnion.size(); ++i) {
+		if (mUnion[i] == v) mUnion[i] = u;
+	}
+}
+
+bool Kruskal(int n, vector<vector<PII>>& v){
+	//Note that the input pair is like this, <weight,node>.
+	priority_queue<int, vector<int>, greater<int>()> pq;
+	vector<int> mUnion(n);
+	int cnt = 0;
+	for (int i = 0; i < n; ++i) {
+		for (auto it : v[i]) {
+			pq.emplace(it.first << 16 | i << 8 | it.second);
+		}
+	}
+	for (int i = 0; i < n; ++n) mUnion[i] = i;
+	while (!pq.empty()) {
+		if (cnt == n - 1) return true;
+		int t = pq.top();
+		int u = t >> 8 & 0xff, v = t & 0xff;
+		if (mUnion[u] != mUnion[v]) {
+			++cnt;
+			updateUnion(mUnion[u], mUnion[v], mUnion);
+		}
+	}
+	return false;
+}

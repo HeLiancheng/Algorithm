@@ -8,6 +8,8 @@
  *********************************************************************/
 #pragma once
 #include<vector>
+#include<set>
+#include<unordered_set>
 #define PII pair<int, int>
 using namespace std;
 
@@ -53,6 +55,12 @@ int pq_bfs_bit(int K, int src, int dst, vector<vector<int>>& v);
  */
 int split_array(vector<int>& nums, int k);
 
+/**
+ * A sample of MST (Prim Algorithm).
+ */
+bool Prim(int n, vector<vector<int>>& v);
 
-
-
+/**
+ * A sample of MST (Kruskal Algorithm).
+ */
+bool Kruskal(int n, vector<vector<PII>>& v);
